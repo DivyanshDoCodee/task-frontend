@@ -18,15 +18,12 @@ export default function RegisterPage() {
       const result = await register(form.name, form.email, form.password);
       console.log('Registration successful:', result);
       toast.success('Account created! Redirecting...');
-      // Small delay to ensure state is updated
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 500);
+      // Use replace instead of navigate to prevent back button issues
+      window.location.replace('/dashboard');
     } catch (err) {
       console.error('Registration error:', err);
       const errorMsg = err.response?.data?.message || err.message || 'Registration failed';
       toast.error(errorMsg);
-    } finally {
       setLoading(false);
     }
   };

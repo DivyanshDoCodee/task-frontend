@@ -24,17 +24,31 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
-    setUser(res.data.user);
+    const { token, user: userData } = res.data;
+    
+    // Store token and user data
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Update state immediately
+    setUser(userData);
+    
+    console.log('User logged in and state updated:', userData);
     return res.data;
   };
 
   const register = async (name, email, password) => {
     const res = await api.post('/auth/register', { name, email, password });
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
-    setUser(res.data.user);
+    const { token, user: userData } = res.data;
+    
+    // Store token and user data
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Update state immediately
+    setUser(userData);
+    
+    console.log('User registered and state updated:', userData);
     return res.data;
   };
 

@@ -16,10 +16,10 @@ export default function LoginPage() {
     try {
       await login(form.email, form.password);
       toast.success('Welcome back!');
-      navigate('/dashboard');
+      // Use replace to prevent back button issues
+      window.location.replace('/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
-    } finally {
       setLoading(false);
     }
   };
