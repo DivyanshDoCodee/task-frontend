@@ -15,11 +15,17 @@ export default function RegisterPage() {
     if (form.password.length < 6) return toast.error('Password must be at least 6 characters');
     setLoading(true);
     try {
-      await register(form.name, form.email, form.password);
-      toast.success('Account created!');
-      navigate('/dashboard');
+      const result = await register(form.name, form.email, form.password);
+      console.log('Registration successful:', result);
+      toast.success('Account created! Redirecting...');
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', err);
+      const errorMsg = err.response?.data?.message || err.message || 'Registration failed';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
