@@ -6,16 +6,35 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
+    if (!stored || stored === 'undefined') return null;
+    try {
+      return JSON.parse(stored);
+    } catch (err) {
+      console.error('Failed to parse user from localStorage:', err);
+      return null;
+    }
   });
   const [loading, setLoading] = useState(true);
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    console.log('User logged out');
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && token !== 'undefined') {
       api.get('/auth/me')
-        .then(res => setUser(res.data.user))
-        .catch(() => logout())
+        .then(res => {
+          setUser(res.data.user);
+          localStorage.setItem('user', JSON.stringify(res.data.user));
+        })
+        .catch(() => {
+          console.log('Token validation failed, logging out');
+          logout();
+        })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -50,12 +69,6 @@ export const AuthProvider = ({ children }) => {
     
     console.log('User registered and state updated:', userData);
     return res.data;
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
   };
 
   return (
